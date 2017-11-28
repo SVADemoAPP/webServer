@@ -212,14 +212,15 @@ public class ApiController
         {
             list.add(l);
         }
-
+        List<MessageModel> messgeLis = null;
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         if (!resultList.isEmpty())
         {
             LocationModel loc = list.get(0);
+            messgeLis = daoMsg.queryByLocation1(loc);
             modelMap.put("error", null);
             modelMap.put("data", loc);
-
+            modelMap.put("message", messgeLis);
         }
         else
         {
