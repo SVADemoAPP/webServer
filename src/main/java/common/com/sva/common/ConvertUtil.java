@@ -99,7 +99,9 @@ public class ConvertUtil
     public static String convertIp(String ip)
     {
         String[] iplist = ip.split("\\.");
-        Logger.getLogger(ConvertUtil.class).error("123456789ip:"+iplist);
+        if(iplist.length != 4){
+            return ip;
+        }
         int ip0 = Integer.parseInt(iplist[0]);
         int ip1 = Integer.parseInt(iplist[1]);
         int ip2 = Integer.parseInt(iplist[2]);

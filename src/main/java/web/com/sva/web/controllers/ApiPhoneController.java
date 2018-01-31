@@ -184,6 +184,7 @@ public class ApiPhoneController {
             @RequestParam(value="floorNo", required=false)String floorNo)
     {
         // 返回值
+        LOG.debug("ID:" + userId+",x:"+x+",y:"+y+",x1:"+x1+",y1:"+y1+",floorNo:"+floorNo);
         Map<String, Object> returnVal = new HashMap<String, Object>();
         if("1".equals(locationType)){
             x = new BigDecimal(x).divide(new BigDecimal(10)).toString();
@@ -192,19 +193,18 @@ public class ApiPhoneController {
                 x1 = new BigDecimal(x1).divide(new BigDecimal(10)).toString();
                 y1 = new BigDecimal(y1).divide(new BigDecimal(10)).toString();
             }
-            LOG.debug("ID:" + userId+",x:"+x+",y:"+y+",x1:"+x1+",y1:"+y1+",floorNo:"+floorNo);
             returnVal = prruService.getLocationPrru(userId,x,y,x1,y1,floorNo);
         }else if("2".equals(locationType)){
             returnVal = prruService.getLocationMixPrru(userId,"0","0","1",floorNo);
+        }else{
+            BleUserModel model = new BleUserModel();
+            model.setFloorNo(floorNo);
+            model.setUserId(userId);
+            LocationModel result = bleService.getLocation(model);
+            LocationModel resultSimple = (LocationModel)returnVal.get("data");
+            LOG.debug(userId+"余弦算法结果："+result.getX().divide(new BigDecimal(10),3,6)+","+result.getY().divide(new BigDecimal(10),3,6)+"。普通定位结果："+resultSimple.getX().divide(new BigDecimal(10),3,6)+","+resultSimple.getY().divide(new BigDecimal(10),3,6));
+            returnVal.put("data", result);
         }
-
-        BleUserModel model = new BleUserModel();
-        model.setFloorNo(floorNo);
-        model.setUserId(userId);
-        LocationModel result = bleService.getLocation(model);
-        LocationModel resultSimple = (LocationModel)returnVal.get("data");
-        LOG.debug(userId+"余弦算法结果："+result.getX().divide(new BigDecimal(10),3,6)+","+result.getY().divide(new BigDecimal(10),3,6)+"。普通定位结果："+resultSimple.getX().divide(new BigDecimal(10),3,6)+","+resultSimple.getY().divide(new BigDecimal(10),3,6));
-        returnVal.put("data", result);
         return returnVal;
     }
     
