@@ -1066,6 +1066,7 @@ CREATE TABLE `prrufeaturedetail` (
     `featureId` INT(11) NOT NULL DEFAULT '0' COMMENT '外键特征库id',
     `gpp` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '柜框槽号',
     `featureValue` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT '特征值',
+	`type` INT(11) NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
 )
 COMMENT='详细的特征值信息'
@@ -1078,6 +1079,7 @@ CREATE TABLE `prrusignal` (
     `userId` VARCHAR(50) NULL DEFAULT NULL COMMENT '用户id' COLLATE 'utf8_unicode_ci',
     `enbid` VARCHAR(50) NULL DEFAULT NULL COMMENT 'enodeBid' COLLATE 'utf8_unicode_ci',
     `timestamp` BIGINT(20) NULL DEFAULT NULL COMMENT '插入时间戳',
+	`type` INT(11) NULL DEFAULT NULL COMMENT '1:lte,2:wifi,3bluetooth',
     PRIMARY KEY (`id`)
 )
 COMMENT='prru信号数据'
