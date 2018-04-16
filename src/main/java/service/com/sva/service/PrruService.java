@@ -1148,6 +1148,11 @@ public class PrruService {
                 LOG.debug("参与计算的gpp："+gpp);
                 dis = dis.add(rsrp.subtract(featureValue).pow(2));
             }
+            
+            if(datas.size()>0){
+            	dis = dis.divide(new BigDecimal(datas.size()),2);
+            }
+            
             LOG.debug("半径："+dis);
             LOG.debug(featureModel.getX());
             LOG.debug(x);
@@ -1161,25 +1166,26 @@ public class PrruService {
                 if(new BigDecimal(featureModel.getX()).compareTo(new BigDecimal(x)) == 0 
                         && new BigDecimal(featureModel.getY()).compareTo(new BigDecimal(y)) == 0 
                         && new BigDecimal(featureModel.getFloorNo()).compareTo(new BigDecimal(floorNo)) == 0){
-                    LOG.debug("找到上一个定位点：x-"+x+",y-"+y+",z-"+floorNo+"。原半径："+dis);
+                    LOG.debug("找到上一个定位点：x="+x+",y="+y+",z="+floorNo+"。原半径："+dis);
                     dis = dis.multiply(new BigDecimal(ratio)).divide(new BigDecimal(100));
-                    LOG.debug("乘系数后半径："+dis);
+                    LOG.debug("上一个点乘系数后半径："+dis);
                 }
                 // 如果特征点是上上一个定位点，特征半径要乘以大于1的系数correction
                 else if(new BigDecimal(featureModel.getX()).compareTo(new BigDecimal(x1)) == 0 
                         && new BigDecimal(featureModel.getY()).compareTo(new BigDecimal(y1)) == 0 
                         && new BigDecimal(featureModel.getFloorNo()).compareTo(new BigDecimal(floorNo)) == 0){
-                    LOG.debug("找到上上一个定位点：x1-"+x1+",y1-"+y1+",z-"+floorNo+"。原半径："+dis);
+                    LOG.debug("找到上上一个定位点：x1="+x1+",y1="+y1+",z="+floorNo+"。原半径："+dis);
                     dis = dis.multiply(new BigDecimal(correction));
-                    LOG.debug("乘系数后半径："+dis);
+                    LOG.debug("上上一个点乘系数后半径："+dis);
                 }
                 // 否则，特征半径要乘以对应的系数
                 else if(new BigDecimal(featureModel.getFloorNo()).compareTo(new BigDecimal(floorNo)) == 0){
                     double disReal = Math.sqrt(Math.pow(Double.parseDouble(featureModel.getX()) - Double.parseDouble(x),2D)
-                            + Math.pow(Double.parseDouble(featureModel.getY()) - Double.parseDouble(y),2D));
-                    LOG.debug("距离："+disReal);
-                    dis = dis.multiply(findRatio(disArray, ratioArray, new BigDecimal(disReal)));
-                    LOG.debug("乘系数后距离："+dis);
+                            + Math.pow(Double.parseDouble(featureModel.getY()) - Double.parseDouble(y),2D));                 
+                    BigDecimal ratio = findRatio(disArray, ratioArray, new BigDecimal(disReal));
+                    LOG.debug("距离："+disReal+"比例系数："+ratio);
+                    dis = dis.multiply(ratio);
+                    LOG.debug("乘系数后半径："+dis);
                 }
             }
             // 将特征半径放入集合
@@ -1191,24 +1197,35 @@ public class PrruService {
         
         // 判断新定位点与上次定位点之间的距离是否超过阈值
         PrruFeatureModel currentPoint = datas.get(minId); 
-//        LOG.debug("本次计算的定位坐标：x-"+currentPoint.getX()+",y-"+currentPoint.getY());
-//        double disReal = Math.pow(Double.parseDouble(currentPoint.getX()) - Double.parseDouble(x),2D) 
-//                + Math.pow(Double.parseDouble(currentPoint.getY()) - Double.parseDouble(y),2D);
-//        LOG.debug("两次定位之间的距离："+disReal);
-//        // 如果超过阈值，返回上次的定位点信息
-//        try{
-//            if(disReal > Math.pow(Double.parseDouble(prruDistance),2D)){
-//                LOG.debug("距离超过："+Math.pow(Double.parseDouble(prruDistance),2D));
-//                currentPoint = prruSignalDao.getFeatureByPositionTemp(new BigDecimal(x), new BigDecimal(y));
-//                LOG.debug("数据库返回：x-"+currentPoint.getX()+",y-"+currentPoint.getY());
-//            }
-//        }catch(Exception e){
-//            LOG.error(e);
-//        }
-//        if(currentPoint.getX() == null){
-//            currentPoint = datas.get(minId);
-//        }
-        LOG.debug("返回的点：x-"+currentPoint.getX()+",y-"+currentPoint.getY()+",z-"+currentPoint.getFloorNo());
+        LOG.debug("本次计算的定位坐标：x="+currentPoint.getX()+",y="+currentPoint.getY());
+        if(new BigDecimal(x).compareTo(new BigDecimal(0)) != 0 && new BigDecimal(y).compareTo(new BigDecimal(0)) != 0) {
+        	double disReal = Math.pow(Double.parseDouble(currentPoint.getX()) - Double.parseDouble(x),2D) 
+                + Math.pow(Double.parseDouble(currentPoint.getY()) - Double.parseDouble(y),2D);
+        	disReal = Math.sqrt(disReal);
+        
+        	LOG.debug("两次定位之间的距离："+disReal);
+        	// 如果超过阈值，返回上次的定位点信息
+        	try{
+        		if(disReal > Double.parseDouble(prruDistance)){
+        			LOG.debug("距离超过："+ prruDistance);
+        			LOG.debug("数据库查询前：x="+x+",y="+y+",floorNo="+floorNo);
+        			
+        			currentPoint = prruSignalDao.getFeatureByPosition(
+                		new BigDecimal(x), new BigDecimal(y), new BigDecimal(floorNo));
+        			if (currentPoint != null) {
+        				LOG.debug("数据库返回：x="+currentPoint.getX()+",y="+currentPoint.getY());
+        			}
+        		}
+        	}catch(Exception e){
+        		LOG.error(e);
+        	}
+        }
+        
+        if(currentPoint == null){
+            currentPoint = datas.get(minId);
+        }
+        
+        LOG.debug("返回的点：x="+currentPoint.getX()+",y="+currentPoint.getY()+",z="+currentPoint.getFloorNo());
         return currentPoint;
     }
     
