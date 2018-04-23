@@ -236,7 +236,70 @@ public class PrruService {
         return result;
     }
     
-    
+    /** 
+     * @Title: calcFloorNo
+     * @Description: 根据用户的gpp计算楼层
+     * @param gpp：扫描到的gpp
+     * @return 
+     */
+    public String calcFloorNo(List<String> gpps){      
+        Map<String, Integer> floorCountMap = new HashMap<String, Integer>();
+        List<Map<String, Object>> singleGppMap = new ArrayList<Map<String, Object>>();
+        Map<String, Object> tempMap = new HashMap<String, Object>();
+        
+        for(int i = 0;i<gpps.size();i++){
+            String gpp = gpps.get(i);
+            singleGppMap.clear();
+            
+            singleGppMap = prruSignalDao.getFloorCount(gpp);
+            
+            /*返回每个gpp在floorNo中出现的次数
+             floorNo	floorNoCount
+             10004.00	2
+             10002.00	8
+             10003.00	4
+             */
+            
+        	//遍历楼层数据
+        	for(Map<String, Object> temp:singleGppMap) {
+        		tempMap.clear();
+        		String floorTemp = temp.get("floorNo").toString();
+        		int countTemp = Integer.parseInt(temp.get("floorNoCount").toString());
+        		
+        		if (floorCountMap.containsKey(floorTemp)) {
+        			floorCountMap.put(floorTemp, countTemp + floorCountMap.get(floorTemp));
+        		}
+        		else {
+        			floorCountMap.put(floorTemp, countTemp);
+        		}
+        	}
+        }
+        
+        //打印每个楼层的gpp总数
+        for (String key : floorCountMap.keySet()) {
+        	 LOG.debug("floorCountMap key= "+ key + " and value= " + floorCountMap.get(key));
+        }
+        
+        /*选择floorCountMap中floorNoCount最大的为用户所在楼层
+        floorNo	floorNoCount
+        10004.00	6
+        10002.00	235
+        10003.00	69
+        */
+        List<Map.Entry<String,Integer>> entryList = new ArrayList<Map.Entry<String,Integer>>(floorCountMap.entrySet());  
+        Collections.sort(entryList, new Comparator<Map.Entry<String,Integer>>() {  
+            public int compare(Entry<String,Integer> entry1,  
+                    Entry<String,Integer> entry2) {  
+                int value1 = entry1.getValue().intValue();  
+                int value2 = entry2.getValue().intValue();  
+                
+                return value2 - value1;  
+            }  
+        }); 
+        
+        // 返回最大值
+        return entryList.get(0).getKey();
+    }
     
     /** 
      * @Title: getLocationPrru 
@@ -291,7 +354,15 @@ public class PrruService {
                 return result;
             }
         }
-        LOG.debug("用户所在楼层："+floorNo);
+        
+        //根据用户的gpp信息计算楼层
+        String calcFloor = calcFloorNo(gpps);
+
+        if (!calcFloor.substring(0,calcFloor.indexOf(".")).equals((floorNo.substring(0,calcFloor.indexOf("."))))) {
+        	LOG.error("计算出来的楼层和前台传入楼层不同");
+        }
+        LOG.debug("用户所在楼层："+floorNo + " 计算出来的楼层："+ calcFloor);
+        
         // 取出与用户信号prru有交集的特征库
         List<PrruFeatureModel> prruFeatures = prruSignalDao.getRelativeFeature(gpps,floorNo);
         // 如果没有匹配的特征库，返回错误信息

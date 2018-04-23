@@ -120,6 +120,15 @@
         WHERE a.floorNo = #{floorNo};
     </select>
     
+    <select id="getFloorCount" resultType="java.util.Map">
+        SELECT prrufeature.floorNo, COUNT(prrufeature.floorNo) as floorNoCount  
+        FROM prrufeature
+        WHERE prrufeature.id in 
+        	(SELECT prrufeaturedetail.featureId from prrufeaturedetail 
+        		WHERE prrufeaturedetail.gpp = #{gpp})
+        		GROUP BY prrufeature.floorNo;
+    </select>
+    
 	<select id="getRelativeFeatureWithoutFloorNo" resultType="PrruFeatureModel">
         SELECT a.*,b.gpp,b.featureValue 
         FROM prruFeature a join (

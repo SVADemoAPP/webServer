@@ -10,6 +10,7 @@ package com.sva.dao;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -95,6 +96,14 @@ public interface PrruSignalDao {
      * @return 
      */
     public List<PrruFeatureModel> getRelativeFeature(@Param("gpps")List<String> gpps, @Param("floorNo")String floorNo);
+
+    /** 
+     * @Title: getFloorCount 
+     * @Description: 根据gpp查询楼层 
+     * @param gpp
+     * @return 
+     */
+    public List<Map<String, Object>> getFloorCount(@Param("gpp")String gpp);
     
     /** 
      * @Title: getRelativeFeatureWithoutFloorNo 
