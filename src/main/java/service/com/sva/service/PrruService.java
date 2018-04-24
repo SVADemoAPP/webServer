@@ -342,24 +342,33 @@ public class PrruService {
         //getAvgPrruSignals(signals, gpps);
         getAveragePrruSignals(signals, gpps);
         LOG.debug("去重后的柜框槽号信息："+gpps.toString());
+
+    	//根据用户的gpp信息计算楼层
+    	String calcFloor = calcFloorNo(gpps);
+    	
+    	if ((floorNo != null) && ! "null".equals(floorNo)){
+    		LOG.debug("用户所在楼层 = "+floorNo + " 计算出来的楼层 = "+ calcFloor);
+    		
+    		if (!calcFloor.substring(0,calcFloor.indexOf(".")).equals((floorNo.substring(0,calcFloor.indexOf("."))))) {
+    			LOG.debug("楼层计算错误： 用户所在楼层 = "+floorNo + " 计算出来的楼层 = "+ calcFloor);
+    		}
+    	}
+    	
         // 获取楼层号
         if(floorNo == null || "null".equals(floorNo)){
+        	/*
             try{
                 floorNo = prruSignalDao.queryFloorNoByUseId(ConvertUtil.convertMacOrIp(userId));
             }catch(Exception e){
                 LOG.error("获取楼层号失败：" + e.getMessage());
                 result.put("error", "获取楼层号失败!");
                 return result;
-            }
+            }*/
+        	
+        	LOG.debug("计算出来的楼层 = "+ calcFloor);
+        	
+        	floorNo = calcFloor;
         }
-        
-        //根据用户的gpp信息计算楼层
-        String calcFloor = calcFloorNo(gpps);
-
-        if (!calcFloor.substring(0,calcFloor.indexOf(".")).equals((floorNo.substring(0,calcFloor.indexOf("."))))) {
-        	LOG.error("计算出来的楼层和前台传入楼层不同");
-        }
-        LOG.debug("用户所在楼层："+floorNo + " 计算出来的楼层："+ calcFloor);
         
         // 取出与用户信号prru有交集的特征库
         List<PrruFeatureModel> prruFeatures = prruSignalDao.getRelativeFeature(gpps,floorNo);
