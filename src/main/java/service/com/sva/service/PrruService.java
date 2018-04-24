@@ -245,7 +245,6 @@ public class PrruService {
     public String calcFloorNo(List<String> gpps){      
         Map<String, Integer> floorCountMap = new HashMap<String, Integer>();
         List<Map<String, Object>> singleGppMap = new ArrayList<Map<String, Object>>();
-        Map<String, Object> tempMap = new HashMap<String, Object>();
         
         for(int i = 0;i<gpps.size();i++){
             String gpp = gpps.get(i);
@@ -261,10 +260,9 @@ public class PrruService {
              */
             
         	//遍历楼层数据
-        	for(Map<String, Object> temp:singleGppMap) {
-        		tempMap.clear();
-        		String floorTemp = temp.get("floorNo").toString();
-        		int countTemp = Integer.parseInt(temp.get("floorNoCount").toString());
+        	for(Map<String, Object> singleGpp:singleGppMap) {
+        		String floorTemp = singleGpp.get("floorNo").toString();
+        		int countTemp = Integer.parseInt(singleGpp.get("floorNoCount").toString());
         		
         		if (floorCountMap.containsKey(floorTemp)) {
         			floorCountMap.put(floorTemp, countTemp + floorCountMap.get(floorTemp));
