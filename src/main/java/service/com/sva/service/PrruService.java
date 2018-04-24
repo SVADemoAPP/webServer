@@ -275,7 +275,7 @@ public class PrruService {
         
         //打印每个楼层的gpp总数
         for (String key : floorCountMap.keySet()) {
-        	 LOG.debug("floorCountMap key= "+ key + " and value= " + floorCountMap.get(key));
+        	 LOG.debug("floorCountMap floor = "+ key + " and count = " + floorCountMap.get(key));
         }
         
         /*选择floorCountMap中floorNoCount最大的为用户所在楼层
