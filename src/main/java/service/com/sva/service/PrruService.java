@@ -298,7 +298,7 @@ public class PrruService {
         // 返回最大值
         return entryList.get(0).getKey();
     }
-    
+
     /** 
      * @Title: getLocationPrru 
      * @Description: 根据用户id，匹配特征库，获取定位信息
@@ -1218,27 +1218,25 @@ public class PrruService {
             BigDecimal minusFeature = calcMinus(featureModel);
             // 特征半径
             BigDecimal dis = new BigDecimal(0);
-            calcGppCount = 0;
+            Integer tempGppCount = 0;
             for(PrruSignalModel p:signals){
                 String gpp = p.getGpp();
                 BigDecimal rsrp = p.getRsrp();
                 BigDecimal featureValue = getFeatureValue(gpp,featureModel,minusFeature);
                 if(featureValue==null){
                     continue;
-                }/*
-                if (false == isValidGpp(gpp)) {
-                	continue;
-                }*/
+                }
+                
                 LOG.debug("参与计算的gpp："+gpp);
-                calcGppCount++;
+                tempGppCount++;
                 dis = dis.add(rsrp.subtract(featureValue).pow(2));
             }
             
-            if(calcGppCount > 0){
-            	dis = dis.divide(new BigDecimal(calcGppCount),2);
+            if(tempGppCount > 0){
+            	dis = dis.divide(new BigDecimal(tempGppCount),2);
             }
             
-            LOG.debug("半径："+dis+ " calcGppCount = " + calcGppCount);
+            LOG.debug("半径："+dis+ " tempGppCount = " + tempGppCount);
             LOG.debug(featureModel.getX());
             LOG.debug(x);
             LOG.debug(featureModel.getY());
@@ -1273,12 +1271,11 @@ public class PrruService {
                     LOG.debug("乘系数后半径："+dis);
                 }
             }
-            //如果参与计算的gpp个数太少，则不放入集合
-            if (calcGppCount <= 5) {
-            	LOG.debug("参与计算的gpp个数太少：calcGppCount = "+ calcGppCount + " datas.size = " + datas.size());
-            	continue;
+            //记录计算gpp个数的最大值
+            if (calcGppCount < tempGppCount) {
+            	calcGppCount = tempGppCount;
             }
-            LOG.debug("参与计算的gpp个数为：calcGppCount = "+ calcGppCount + " datas.size = " + datas.size());
+            LOG.debug("参与计算的gpp个数为：tempGppCount = "+ tempGppCount + " datas.size = " + datas.size());
             // 将特征半径放入集合
             distance.put(id, dis);
         }
@@ -1293,26 +1290,26 @@ public class PrruService {
         	double disReal = Math.pow(Double.parseDouble(currentPoint.getX()) - Double.parseDouble(x),2D) 
                 + Math.pow(Double.parseDouble(currentPoint.getY()) - Double.parseDouble(y),2D);
         	disReal = Math.sqrt(disReal);
-        
+        	
         	LOG.debug("两次定位之间的距离："+disReal);
+        	LOG.debug("本次计算的GppCount个数 calcGppCount = "+ calcGppCount);
         	// 如果超过阈值，返回上次的定位点信息
         	try{
-        		if(disReal > Double.parseDouble(prruDistance)){
+        		if((calcGppCount <= 3) || (disReal > Double.parseDouble(prruDistance))){
         			LOG.debug("距离超过："+ prruDistance);
-        			
-        			/*
+        			LOG.debug("本次计算的GppCount个数太少 calcGppCount = "+ calcGppCount);
         			currentPoint = prruSignalDao.getFeatureByPosition(
                 		new BigDecimal(x), new BigDecimal(y), new BigDecimal(floorNo));
         			if (currentPoint != null) {
         				LOG.debug("数据库返回：x="+currentPoint.getX()+",y="+currentPoint.getY());
         			}
-        			*/
+        			
         		}
         	}catch(Exception e){
         		LOG.error(e);
         	}
         }
-        
+               	
         if(currentPoint == null){
             currentPoint = datas.get(minId);
         }
@@ -1355,8 +1352,8 @@ public class PrruService {
      * @return 
      */
     private BigDecimal getFeatureValue(String gpp, PrruFeatureModel model, BigDecimal defaultVal){
-        // 结果
-        BigDecimal result = null;
+        // 如果特征库里没有对应的gpp值，则使用defaultVal
+        BigDecimal result = defaultVal;
         // 特征值list
         List<PrruFeatureDetailModel> list = model.getFeatureValues();
         // 遍历list，取出对应gpp的特征值
@@ -1381,10 +1378,10 @@ public class PrruService {
         Collections.sort(entryList, new Comparator<Map.Entry<Integer, BigDecimal>>() {  
             public int compare(Entry<Integer, BigDecimal> entry1,  
                     Entry<Integer, BigDecimal> entry2) {  
-                int value1 = entry1.getValue().intValue();  
-                int value2 = entry2.getValue().intValue();  
+            	BigDecimal value1 = entry1.getValue();
+                BigDecimal value2 = entry2.getValue();  
                 
-                return value1 - value2;  
+                return value1.compareTo(value2);
             }  
         }); 
         
@@ -1409,103 +1406,6 @@ public class PrruService {
             }
         }
         return result;
-    }
-
-    /** 
-     * @Title: isValidGpp 
-     * @Description: 检查是否本层楼合法的gpp
-     * @param 
-     * @param 
-     * @param 
-     * @return 
-     */
-    private boolean isValidGpp(String gpp){
-    	String[] validGpps = {
-    			"04:23:CD:25:48:AC",
-    			"0A:05:59:85:01:7C",
-    			"0B:CC:A5:67:15:4F",
-    			"0C:96:23:90:C1:B9",
-    			"0E:64:C0:8D:86:DF",
-    			"11:53:08:EC:D7:33",
-    			"12:59:B3:5D:6B:AB",
-    			"12:E1:D9:2D:FC:7B",
-    			"19:C9:63:30:D6:5E",
-    			"1A:5F:F0:A7:A4:30",
-    			"20:38:BC:AB:C3:C3",
-    			"22:2B:E8:57:72:EB",
-    			"22:7B:8C:84:82:26",
-    			"27:BA:C7:C1:86:B1",
-    			"2A:FA:60:94:57:68",
-    			"2D:34:50:00:AF:26",
-    			"37:A8:92:C8:9F:8E",
-    			"3D:35:54:2F:A5:84",
-    			"3F:F6:1D:52:F4:3F",
-    			"40:86:BF:E3:97:28",
-    			"41:70:CF:B5:E1:10",
-    			"43:93:2A:A3:E1:6D",
-    			"44:65:38:8F:BA:2E",
-    			"44:79:B0:8A:87:2A",
-    			"46:74:A6:0D:EA:DB",
-    			"4E:64:19:B6:48:CE",
-    			"4F:4A:5E:7A:9A:29",
-    			"51:D9:A5:29:4B:67",
-    			"53:76:32:80:E1:D2",
-    			"54:49:B7:6D:86:BA",
-    			"58:96:E1:B4:FA:A5",
-    			"59:82:6A:ED:C6:2D",
-    			"5A:55:FE:57:AA:AA",
-    			"5B:3D:72:F1:FC:5D",
-    			"5C:A6:51:8A:ED:EE",
-    			"5F:37:2A:53:8F:14",
-    			"62:17:A7:73:2C:2E",
-    			"62:AA:0E:52:A5:F9",
-    			"66:B8:86:89:54:DF",
-    			"6E:CA:1D:F0:2C:01",
-    			"74:7B:2B:73:EE:E8",
-    			"78:1A:64:8D:F9:6A",
-    			"78:53:BA:73:43:03",
-    			"7A:46:FF:89:99:42",
-    			"7A:E5:ED:C5:F1:A8",
-    			"7D:A2:B8:1E:DF:80",
-    			"7F:1E:7F:B3:55:E7",
-    			"80:A8:B1:FA:0D:94",
-    			"84:07:BB:EE:7D:5D",
-    			"8A:DC:0E:36:93:E7",
-    			"8B:00:DA:96:FB:33",
-    			"8C:A7:F8:33:6B:D7",
-    			"97:66:2A:F4:79:97",
-    			"98:CE:6F:ED:FF:78",
-    			"9D:FE:BD:A3:51:FB",
-    			"A7:7D:45:ED:76:9A",
-    			"A8:B2:AC:32:B9:69",
-    			"A8:B2:AC:32:B9:69",
-    			"AF:B3:28:77:2A:9C",
-    			"B3:37:24:D8:2A:1B",
-    			"B6:A8:2F:C6:C8:55",
-    			"B7:0F:08:0A:34:A8",
-    			"BA:53:A0:22:F0:E6",
-    			"C3:5F:06:CB:62:B0",
-    			"C5:77:E3:17:59:3D",
-    			"C8:93:27:5C:CA:A1",
-    			"D4:1A:D6:88:89:5B",
-    			"D4:AA:23:CE:09:86",
-    			"D8:7C:DF:71:61:F5",
-    			"DC:0D:30:23:B2:4D",
-    			"DC:0D:30:23:C8:FC",
-    			"DF:8C:10:EC:9B:23",
-    			"E9:46:BD:D9:EB:E0",
-    			"E9:D6:E6:63:B8:E9",
-    			"EA:74:21:AC:0B:3C",
-    			"ED:29:B5:BB:34:8E",
-    			"F4:D2:E3:6C:41:82"
-    	};
-    	
-        for(int i = 0; i<validGpps.length; i++){
-            if(gpp.equals(validGpps[i])){
-                return true;
-            }
-        }
-        return false;
     }
     
     /** 
