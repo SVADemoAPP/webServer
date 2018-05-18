@@ -166,6 +166,9 @@ public class PrruService {
     @Value("${blue.count}")
     private String blueCount;
     
+    @Value("${blue.gppMinCount}")
+    private String gppMinCount;    
+    
     /** 
      * @Title: collectFeatureValue 
      * @Description: 采集特征库
@@ -219,20 +222,28 @@ public class PrruService {
                 prruSignalDao.savePhoneSignal(gpp,userid,gpp,rsrp,"*",localTimes,type);
             }
     	}
-
+   	
         if(!StringUtils.isEmpty(signalBlueJson)){
         	JSONArray signalArray = JSONArray.fromObject(signalBlueJson);
-            for(int i = 0; i<signalArray.size(); i++){
-            	JSONObject phoneSignal = signalArray.getJSONObject(i);
-                String gpp = phoneSignal.getString("gpp");
-                String rsrp = phoneSignal.getString("rsrp");
-                String type = phoneSignal.getString("type");
-                //mylog.prru("prru data: enbid:"+type+" userid:"+userid+" gpp"+gpp+" rsrp:"+rsrp);
-                prruSignalDao.savePhoneSignal(gpp,userid,gpp,rsrp,"*",localTimes,type);
-            }
+        	
+        	//只有多于gppMinCount的iBeacon信号才放入数据库，否则认为本次扫描不正常，直接丢弃
+        	if (signalArray.size() > Integer.valueOf(gppMinCount)) {
+        		for(int i = 0; i<signalArray.size(); i++){
+	            	JSONObject phoneSignal = signalArray.getJSONObject(i);
+	                String gpp = phoneSignal.getString("gpp");
+	                String rsrp = phoneSignal.getString("rsrp");
+	                String type = phoneSignal.getString("type");
+	                //mylog.prru("prru data: enbid:"+type+" userid:"+userid+" gpp"+gpp+" rsrp:"+rsrp);
+	                prruSignalDao.savePhoneSignal(gpp,userid,gpp,rsrp,"*",localTimes,type);
+        		}
+        		result.put("data", "上传成功");
+        	}
+        	else {
+        		LOG.debug("本次上传的蓝牙信号太少 = "+ signalArray.size() + " 不入库");
+        		result.put("data", "上传失败");
+        	}        		
         }
         
-        result.put("data", "上传成功");
         return result;
     }
     
