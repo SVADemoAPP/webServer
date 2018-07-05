@@ -312,10 +312,10 @@ public class AmqpThread extends Thread {
     private void saveNetworkinfo(JSONObject result,String ip)
     {
         JSONObject jsonAll = result.getJSONArray("networkinfo").getJSONObject(0);
-        String userid = jsonAll.getString("userid");
+        String userid = correctUserId(jsonAll.getString("userid"));
         String enbid = jsonAll.getJSONObject("lampsiteinfo").getString("enbid");
         JSONArray jsonList = jsonAll.getJSONObject("lampsiteinfo").getJSONArray("prrusignal");
-        long timestamp = jsonAll.getLong("timestamp");
+//        long timestamp = jsonAll.getLong("timestamp");
         long localTimes = System.currentTimeMillis();
         for(int i = 0; i<jsonList.size(); i++){
             JSONObject temp = jsonList.getJSONObject(i);
@@ -340,7 +340,7 @@ public class AmqpThread extends Thread {
             JSONArray useridList = temp.getJSONArray("userid");
             String userid = "";
             if(useridList.size()>0){
-                userid = useridList.getString(0);
+                userid = correctUserId(useridList.getString(0));
             }else{
                 continue;
             }
@@ -372,30 +372,42 @@ public class AmqpThread extends Thread {
         long timeLocal = System.currentTimeMillis();
         lm.setTimestamp(new BigDecimal(timeLocal));
         // 设置LocationModel
-        JSONObject location = loc.getJSONObject("location");
+        if (loc.containsKey("location")) {
+            JSONObject location = loc.getJSONObject("location");
+            lm.setX(BigDecimal.valueOf(location.getInt("x")));
+            lm.setY(BigDecimal.valueOf(location.getInt("y")));
+            int z = location.getInt("z");
+            // 楼层号转换
+            if(z > 0){
+                z += storeId*10000;
+            }else{
+                z = Math.abs(z) + 5000 + storeId*10000;
+            }
+            lm.setZ(BigDecimal.valueOf(z));
+        }
         lm.setSvaId(svaId);
         lm.setIdType(loc.getString("IdType"));
         lm.setTimestamp(BigDecimal.valueOf(System.currentTimeMillis()));
         lm.setTimestampSva(BigDecimal.valueOf(loc.getLong("Timestamp")));
         lm.setDataType(loc.getString("datatype"));
-        lm.setX(BigDecimal.valueOf(location.getInt("x")));
-        lm.setY(BigDecimal.valueOf(location.getInt("y")));
-        int z = location.getInt("z");
         JSONArray useridList = loc.getJSONArray("userid");
         // 用户存在多个的情况，目前只取第一个；若用户为空则不作处理
         if(useridList.size()>0){
-            lm.setUserID(useridList.getString(0));
+            lm.setUserID(correctUserId(useridList.getString(0)));
         }else{
             return false;
         }
-        // 楼层号转换
-        if(z > 0){
-            z += storeId*10000;
-        }else{
-            z = Math.abs(z) + 5000 + storeId*10000;
-        }
-        lm.setZ(BigDecimal.valueOf(z));
+
         
         return true;
+    }
+    
+    
+    private String correctUserId(String wrongId){
+        String rightId = wrongId;
+        if(wrongId.length() == 7){
+            rightId = "0" + rightId;
+        }
+        return rightId;
     }
 }
