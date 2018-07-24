@@ -286,7 +286,11 @@ public class PrruService {
             // 查询生成的特征半径
             PrruFeatureModel feature = 
                     prruSignalDao.getFeatureByPosition(model.getX(), model.getY(), model.getFloorNo());
-            BigDecimal radius = feature.getFeatureRadius();
+            BigDecimal radius = null;
+            if(feature!=null)
+            {
+                radius = feature.getFeatureRadius();
+            }
             // radius为null说明异常中断，否则采集完成
             if (radius==null) {
                 result.put("data", "server error"); 

@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   UNIQUE KEY `Index 2` (`name`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 INSERT INTO `role` (`id`, `name`, `menukey`, `menus`, `storesid`, `stores`, `updateTime`) VALUES
-	(1, '1', '1', '1', '1', '1', '2016-06-25 05:28:33');
+    (1, '1', '1', '1', '1', '1', '2016-06-25 05:28:33');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 -- 导出  表 sva.account 结构
 CREATE TABLE IF NOT EXISTS `account` (
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `account` (
 -- 正在导出表  sva.account 的数据：~1 rows (大约)
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
 INSERT INTO `account` (`id`, `roleid`, `username`, `password`, `updateTime`) VALUES
-	(1, 1, 'admin', 'admin', '2016-06-25 05:28:55');
+    (1, 1, 'admin', 'admin', '2016-06-25 05:28:55');
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 
 
@@ -137,25 +137,25 @@ CREATE TABLE IF NOT EXISTS `allpeople` (
 
 
 CREATE TABLE IF NOT EXISTS `area` (
-	`areaName` VARCHAR(255) NOT NULL,
-	`placeId` INT(11) NOT NULL,
-	`id` INT(10) NOT NULL AUTO_INCREMENT,
-	`floorNo` DECIMAL(10,2) NOT NULL,
-	`xSpot` DECIMAL(10,2) NOT NULL,
-	`ySpot` DECIMAL(10,2) NOT NULL,
-	`status` INT(11) NOT NULL DEFAULT '0',
-	`zoneId` VARCHAR(50) NULL DEFAULT NULL,
-	`x1Spot` DECIMAL(10,2) NOT NULL,
-	`y1Spot` DECIMAL(10,2) NOT NULL,
-	`categoryid` INT(10) NOT NULL,
-	`ISVIP` VARCHAR(50) NULL DEFAULT NULL,
-	PRIMARY KEY (`id`),
-	INDEX `FK_message_maps` (`placeId`) USING BTREE,
-	INDEX `FK_message_store` (`floorNo`) USING BTREE,
-	INDEX `FK_message_category` (`categoryid`) USING BTREE,
-	CONSTRAINT `area_ibfk_1` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-	CONSTRAINT `area_ibfk_2` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON UPDATE CASCADE ON DELETE CASCADE,
-	CONSTRAINT `area_ibfk_3` FOREIGN KEY (`categoryid`) REFERENCES `category` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+    `areaName` VARCHAR(255) NOT NULL,
+    `placeId` INT(11) NOT NULL,
+    `id` INT(10) NOT NULL AUTO_INCREMENT,
+    `floorNo` DECIMAL(10,2) NOT NULL,
+    `xSpot` DECIMAL(10,2) NOT NULL,
+    `ySpot` DECIMAL(10,2) NOT NULL,
+    `status` INT(11) NOT NULL DEFAULT '0',
+    `zoneId` VARCHAR(50) NULL DEFAULT NULL,
+    `x1Spot` DECIMAL(10,2) NOT NULL,
+    `y1Spot` DECIMAL(10,2) NOT NULL,
+    `categoryid` INT(10) NOT NULL,
+    `ISVIP` VARCHAR(50) NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `FK_message_maps` (`placeId`) USING BTREE,
+    INDEX `FK_message_store` (`floorNo`) USING BTREE,
+    INDEX `FK_message_category` (`categoryid`) USING BTREE,
+    CONSTRAINT `area_ibfk_1` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `area_ibfk_2` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `area_ibfk_3` FOREIGN KEY (`categoryid`) REFERENCES `category` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 )
 COLLATE='utf8_general_ci';
 
@@ -235,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `code` (
 -- 正在导出表  sva.code 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `code` DISABLE KEYS */;
 INSERT INTO `code` (`name`, `password`) VALUES
-	('admin', 'admin');
+    ('admin', 'admin');
 /*!40000 ALTER TABLE `code` ENABLE KEYS */;
 
 
@@ -349,15 +349,16 @@ CREATE TABLE IF NOT EXISTS `geofencing` (
 
 
 -- 导出  表 sva.locationdelay 结构
-CREATE TABLE IF NOT EXISTS `locationdelay` (
-  `id` int(11) NOT NULL DEFAULT '0',
-  `placeId` int(11) DEFAULT NULL,
-  `floorNo` decimal(10,2) DEFAULT NULL,
-  `dataDelay` double DEFAULT NULL,
-  `positionDelay` double DEFAULT NULL,
-  `updateTime` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=latin1;
+CREATE TABLE `locationdelay` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `placeId` INT(11) NULL DEFAULT NULL,
+    `floorNo` DECIMAL(10,2) NULL DEFAULT NULL,
+    `dataDelay` DOUBLE NULL DEFAULT NULL,
+    `positionDelay` DOUBLE NULL DEFAULT NULL,
+    `updateTime` BIGINT(20) NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+)
+COLLATE='latin1_swedish_ci';
 
 -- 正在导出表  sva.locationdelay 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `locationdelay` DISABLE KEYS */;
@@ -424,35 +425,35 @@ CREATE TABLE IF NOT EXISTS `menuenglish` (
 -- 正在导出表  sva.menuenglish 的数据：~28 rows (大约)
 /*!40000 ALTER TABLE `menuenglish` DISABLE KEYS */;
 INSERT INTO `menuenglish` (`id`, `keyEN`, `name`) VALUES
-	(1, 'key_storeManage', 'Store Management'),
-	(2, 'key_svaManage', 'SVA Management'),
-	(3, 'key_mapManage', 'Map Management'),
-	(4, 'key_messagePush', 'Message Management'),
-	(5, 'key_sellerInfo', 'Seller Management'),
-	(6, 'key_areaCategory', ' Regional category management '),
-	(7, 'key_areaInfo', 'Regional information input'),
-	(8, 'key_customerHeamap', 'Customer Heatmap'),
-	(9, 'key_customerPeriodHeamap', 'Customer Heatmap in Period'),
-	(10,'key_customerScattermap', 'Customer Scattermap'),
-	(11,'key_historicalTrack', 'Historical Track'),
-	(12,'key_CustomerFlowLinemap', 'Customer Flow Range Linemap'),
-	(13,'key_code', 'Code Management'),
-	(14,'key_estimateDeviation', 'Set Estimate Deviation'),
-	(15,'key_summaryDisplay', 'Summary Display'),
-	(16,'key_bluemixConnection', 'Bluemix Connection'),
-	(17,'key_ping', 'ping'),
-	(18,'key_pRRUConfig', 'pRRU Config'),
-	(19, 'key_versionDownload', 'Version Downloads'),
-	(20, 'key_APKDownload', 'APKDownload'),
-	(21, 'key_role', 'Role management'),
-	(22, 'key_paramConfig', 'Parameter configuration '),
-	(23, 'key_account', 'Rights management'),
-	(24, 'key_allShow', 'Global overview'),
-	(25, 'key_dynamicAccuyacy', 'Dynamic accuracy test'),
-	(26, 'key_staticAccuyacy', 'Static accuracy test'),
-	(27, 'key_positionlatency', ' Position latency'),
-	(28, 'key_MessagePush', 'Message push accuracy'),
-	(29, 'key_positionMap', 'Position Distribution Map');
+    (1, 'key_storeManage', 'Store Management'),
+    (2, 'key_svaManage', 'SVA Management'),
+    (3, 'key_mapManage', 'Map Management'),
+    (4, 'key_messagePush', 'Message Management'),
+    (5, 'key_sellerInfo', 'Seller Management'),
+    (6, 'key_areaCategory', ' Regional category management '),
+    (7, 'key_areaInfo', 'Regional information input'),
+    (8, 'key_customerHeamap', 'Customer Heatmap'),
+    (9, 'key_customerPeriodHeamap', 'Customer Heatmap in Period'),
+    (10,'key_customerScattermap', 'Customer Scattermap'),
+    (11,'key_historicalTrack', 'Historical Track'),
+    (12,'key_CustomerFlowLinemap', 'Customer Flow Range Linemap'),
+    (13,'key_code', 'Code Management'),
+    (14,'key_estimateDeviation', 'Set Estimate Deviation'),
+    (15,'key_summaryDisplay', 'Summary Display'),
+    (16,'key_bluemixConnection', 'Bluemix Connection'),
+    (17,'key_ping', 'ping'),
+    (18,'key_pRRUConfig', 'pRRU Config'),
+    (19, 'key_versionDownload', 'Version Downloads'),
+    (20, 'key_APKDownload', 'APKDownload'),
+    (21, 'key_role', 'Role management'),
+    (22, 'key_paramConfig', 'Parameter configuration '),
+    (23, 'key_account', 'Rights management'),
+    (24, 'key_allShow', 'Global overview'),
+    (25, 'key_dynamicAccuyacy', 'Dynamic accuracy test'),
+    (26, 'key_staticAccuyacy', 'Static accuracy test'),
+    (27, 'key_positionlatency', ' Position latency'),
+    (28, 'key_MessagePush', 'Message push accuracy'),
+    (29, 'key_positionMap', 'Position Distribution Map');
 /*!40000 ALTER TABLE `menuenglish` ENABLE KEYS */;
 
 
@@ -467,35 +468,35 @@ CREATE TABLE IF NOT EXISTS `menuname` (
 -- 正在导出表  sva.menuname 的数据：~28 rows (大约)
 /*!40000 ALTER TABLE `menuname` DISABLE KEYS */;
 INSERT INTO `menuname` (`id`, `keyZH`, `name`) VALUES
-	(1, 'key_storeManage', '商场管理'),
-	(2, 'key_svaManage', 'SVA管理'),
-	(3, 'key_mapManage', '地图管理'),
-	(4, 'key_messagePush', '消息推送管理'),
-	(5, 'key_sellerInfo', '商户信息管理'),
-	(6, 'key_areaCategory', '区域类别管理'),
-	(7, 'key_areaInfo', '区域信息录入'),
-	(8, 'key_customerHeamap', '客流实时热力图'),
-	(9, 'key_customerPeriodHeamap', '时间段客流热力图'),
-	(10, 'key_customerScattermap', '客流实时散点图'),
-	(11, 'key_historicalTrack', '历史轨迹'),
-	(12, 'key_CustomerFlowLinemap', '历史客流分析图'),
-	(13, 'key_code', '口令管理'),
-	(14, 'key_estimateDeviation', '预估偏差设定'),
-	(15, 'key_summaryDisplay', '汇总结果'),
-	(16, 'key_bluemixConnection', 'bluemix对接'),
-	(17, 'key_ping', 'ping'),
-	(18, 'key_pRRUConfig', 'pRRU配置'),
-	(19, 'key_versionDownload', '版本下载'),
-	(20, 'key_APKDownload', 'APK下载'),
-	(21, 'key_role', '角色管理'),
-	(22, 'key_account', '权限管理'),
-	(23, 'key_paramConfig', '参数配置'),
-	(24, 'key_allShow', '全局概览'),
-	(25, 'key_dynamicAccuyacy', '动态精度测试'),
-	(26, 'key_staticAccuyacy', '静态精度测试'),
-	(27, 'key_positionlatency', '定位延时'),
-	(28, 'key_MessagePush', '消息推送准确率'),
-	(29, 'key_positionMap', '手机号归属地分布图');
+    (1, 'key_storeManage', '商场管理'),
+    (2, 'key_svaManage', 'SVA管理'),
+    (3, 'key_mapManage', '地图管理'),
+    (4, 'key_messagePush', '消息推送管理'),
+    (5, 'key_sellerInfo', '商户信息管理'),
+    (6, 'key_areaCategory', '区域类别管理'),
+    (7, 'key_areaInfo', '区域信息录入'),
+    (8, 'key_customerHeamap', '客流实时热力图'),
+    (9, 'key_customerPeriodHeamap', '时间段客流热力图'),
+    (10, 'key_customerScattermap', '客流实时散点图'),
+    (11, 'key_historicalTrack', '历史轨迹'),
+    (12, 'key_CustomerFlowLinemap', '历史客流分析图'),
+    (13, 'key_code', '口令管理'),
+    (14, 'key_estimateDeviation', '预估偏差设定'),
+    (15, 'key_summaryDisplay', '汇总结果'),
+    (16, 'key_bluemixConnection', 'bluemix对接'),
+    (17, 'key_ping', 'ping'),
+    (18, 'key_pRRUConfig', 'pRRU配置'),
+    (19, 'key_versionDownload', '版本下载'),
+    (20, 'key_APKDownload', 'APK下载'),
+    (21, 'key_role', '角色管理'),
+    (22, 'key_account', '权限管理'),
+    (23, 'key_paramConfig', '参数配置'),
+    (24, 'key_allShow', '全局概览'),
+    (25, 'key_dynamicAccuyacy', '动态精度测试'),
+    (26, 'key_staticAccuyacy', '静态精度测试'),
+    (27, 'key_positionlatency', '定位延时'),
+    (28, 'key_MessagePush', '消息推送准确率'),
+    (29, 'key_positionMap', '手机号归属地分布图');
 /*!40000 ALTER TABLE `menuname` ENABLE KEYS */;
 
 
@@ -623,7 +624,7 @@ CREATE TABLE IF NOT EXISTS `param` (
 -- 正在导出表  sva.param 的数据：~1 rows (大约)
 /*!40000 ALTER TABLE `param` DISABLE KEYS */;
 INSERT INTO `param` (`id`, `banThreshold`, `filterLength`, `horizontalWeight`, `ongitudinalWeight`, `maxDeviation`, `exceedMaxDeviation`, `updateTime`, `correctMapDirection`, `restTimes`, `step`, `filterPeakError`, `peakWidth`) VALUES
-	(1, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1, 1.00, 1.00, 1.00, 1.00, 1.00);
+    (1, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1, 1.00, 1.00, 1.00, 1.00, 1.00);
 /*!40000 ALTER TABLE `param` ENABLE KEYS */;
 
 
@@ -665,20 +666,20 @@ CREATE TABLE IF NOT EXISTS `prru` (
 
 -- 导出  表 sva.register 结构
 CREATE TABLE IF NOT EXISTS `register` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`userId` VARCHAR(50) NULL DEFAULT NULL,
-	`info` VARCHAR(50) NULL DEFAULT NULL,
-	`userName` VARCHAR(50) NULL DEFAULT NULL,
-	`loginStatus` VARCHAR(50) NULL DEFAULT NULL,
-	`timestamp` BIGINT(20) NULL DEFAULT NULL,
-	`status` INT(11) NULL DEFAULT '0',
-	`password` VARCHAR(50) NULL DEFAULT NULL,
-	`phoneNumber` BIGINT(20) NULL DEFAULT NULL,
-	`role` INT(11) NULL DEFAULT NULL COMMENT '0:  1:  2:',
-	`isTrue` INT(11) NULL DEFAULT '0',
-	`otherPhone` VARCHAR(50) NULL DEFAULT NULL,
-	UNIQUE INDEX `55555` (`phoneNumber`),
-	INDEX `id` (`id`)
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `userId` VARCHAR(50) NULL DEFAULT NULL,
+    `info` VARCHAR(50) NULL DEFAULT NULL,
+    `userName` VARCHAR(50) NULL DEFAULT NULL,
+    `loginStatus` VARCHAR(50) NULL DEFAULT NULL,
+    `timestamp` BIGINT(20) NULL DEFAULT NULL,
+    `status` INT(11) NULL DEFAULT '0',
+    `password` VARCHAR(50) NULL DEFAULT NULL,
+    `phoneNumber` BIGINT(20) NULL DEFAULT NULL,
+    `role` INT(11) NULL DEFAULT NULL COMMENT '0:  1:  2:',
+    `isTrue` INT(11) NULL DEFAULT '0',
+    `otherPhone` VARCHAR(50) NULL DEFAULT NULL,
+    UNIQUE INDEX `55555` (`phoneNumber`),
+    INDEX `id` (`id`)
 )
 COLLATE='utf8_general_ci'
 AUTO_INCREMENT=6;
@@ -884,20 +885,20 @@ CREATE TABLE IF NOT EXISTS `svastoremap` (
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `shprames` (
-	`floorNo1` DECIMAL(10,2) NULL DEFAULT NULL,
-	`floorNo2` DECIMAL(10,2) NULL DEFAULT NULL,
-	`floorNo3` DECIMAL(10,2) NULL DEFAULT NULL,
-	`densitySel1` INT(11) NULL DEFAULT NULL,
-	`densitySel2` INT(11) NULL DEFAULT NULL,
-	`densitySel3` INT(11) NULL DEFAULT NULL,
-	`startTime` DATETIME NULL DEFAULT NULL,
-	`radiusSel1` INT(11) NULL DEFAULT NULL,
-	`radiusSel2` INT(11) NULL DEFAULT NULL,
-	`radiusSel3` INT(11) NULL DEFAULT NULL,
-	`id` INT(11) NOT NULL DEFAULT '0',
-	`coefficient` INT(11) NOT NULL DEFAULT '0',
-	`periodSel` INT(11) NULL DEFAULT NULL,
-	PRIMARY KEY (`id`)
+    `floorNo1` DECIMAL(10,2) NULL DEFAULT NULL,
+    `floorNo2` DECIMAL(10,2) NULL DEFAULT NULL,
+    `floorNo3` DECIMAL(10,2) NULL DEFAULT NULL,
+    `densitySel1` INT(11) NULL DEFAULT NULL,
+    `densitySel2` INT(11) NULL DEFAULT NULL,
+    `densitySel3` INT(11) NULL DEFAULT NULL,
+    `startTime` DATETIME NULL DEFAULT NULL,
+    `radiusSel1` INT(11) NULL DEFAULT NULL,
+    `radiusSel2` INT(11) NULL DEFAULT NULL,
+    `radiusSel3` INT(11) NULL DEFAULT NULL,
+    `id` INT(11) NOT NULL DEFAULT '0',
+    `coefficient` INT(11) NOT NULL DEFAULT '0',
+    `periodSel` INT(11) NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
 )
 COLLATE='latin1_swedish_ci';
 
@@ -924,34 +925,34 @@ CREATE TABLE IF NOT EXISTS `shpramesjing` (
 COLLATE='latin1_swedish_ci';
 
 CREATE TABLE IF NOT EXISTS `pushmsg` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-	`userId` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '用户id',
-	`content` VARCHAR(100) NULL DEFAULT '0' COMMENT '推送消息内容',
-	PRIMARY KEY (`id`)
+    `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+    `userId` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '用户id',
+    `content` VARCHAR(100) NULL DEFAULT '0' COMMENT '推送消息内容',
+    PRIMARY KEY (`id`)
 )
 COMMENT='服务器端推送消息，一个userid对应多条消息'
 COLLATE='utf8_general_ci'
 AUTO_INCREMENT=4;
 
 CREATE TABLE IF NOT EXISTS `ticket` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`msgId` VARCHAR(50) NULL DEFAULT NULL,
-	`chances` VARCHAR(50) NULL DEFAULT NULL,
-	`ticketPath` VARCHAR(50) NULL DEFAULT NULL,
-	PRIMARY KEY (`id`)
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `msgId` VARCHAR(50) NULL DEFAULT NULL,
+    `chances` VARCHAR(50) NULL DEFAULT NULL,
+    `ticketPath` VARCHAR(50) NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
 )
 COLLATE='latin1_swedish_ci'
 AUTO_INCREMENT=9;
 
 CREATE TABLE IF NOT EXISTS `website_visit` (
-	`visitCount` INT(11) NULL DEFAULT '0',
-	`ip` VARCHAR(50) NULL DEFAULT NULL,
-	`last_visitTime` BIGINT(20) NULL DEFAULT NULL,
-	`first_visitTime` BIGINT(20) NULL DEFAULT NULL,
-	`userName` VARCHAR(50) NULL DEFAULT NULL,
-	`iosCount` INT(11) NULL DEFAULT '0',
-	`androidCount` INT(11) NULL DEFAULT '0',
-	`webCount` INT(11) NULL DEFAULT '0'
+    `visitCount` INT(11) NULL DEFAULT '0',
+    `ip` VARCHAR(50) NULL DEFAULT NULL,
+    `last_visitTime` BIGINT(20) NULL DEFAULT NULL,
+    `first_visitTime` BIGINT(20) NULL DEFAULT NULL,
+    `userName` VARCHAR(50) NULL DEFAULT NULL,
+    `iosCount` INT(11) NULL DEFAULT '0',
+    `androidCount` INT(11) NULL DEFAULT '0',
+    `webCount` INT(11) NULL DEFAULT '0'
 )
 COLLATE='latin1_swedish_ci'; 
 
@@ -1051,10 +1052,11 @@ CREATE TABLE `prrufeature` (
     `x` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT 'x坐标（米）',
     `y` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT 'y坐标（米）',
     `floorNo` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT '楼层id',
-    `checkValue` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT '校验值',
+    `checkValue` DECIMAL(10,2) NULL DEFAULT '0.00' COMMENT '校验值',
     `featureRadius` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT '特征半径',
     `userId` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '用户id',
     `timestamp` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '插入时间戳',
+    `eNodeBid` BIGINT(20) NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
 )
 COMMENT='prru特征库\r\n'
@@ -1093,4 +1095,3 @@ CREATE TABLE `acrdata` (
     INDEX `Index 1` (`id`)
 )
 COLLATE='utf8_bin';
-

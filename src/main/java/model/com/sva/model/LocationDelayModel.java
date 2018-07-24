@@ -26,6 +26,26 @@ public class LocationDelayModel
     
     private EstimateModel estimate;
     
+    private String floorNo;
+    
+    private int placeId;
+    
+    public String getFloorNo() {
+        return floorNo;
+    }
+
+    public void setFloorNo(String floorNo) {
+        this.floorNo = floorNo;
+    }
+
+    public int getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(int placeId) {
+        this.placeId = placeId;
+    }
+
     public long getUpdateTime()
     {
         return updateTime;

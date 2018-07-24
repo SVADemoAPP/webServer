@@ -71,8 +71,8 @@
     <insert id="savaMessagePush">
         INSERT INTO locationdelay(placeId,floorNo,dataDelay,positionDelay,updateTime) 
         VALUES(
-            #{store.id},
-            #{maps.floor},
+            #{placeId},
+            #{floorNo},
             #{dataDelay},
             #{positionDelay},
             #{updateTime}
